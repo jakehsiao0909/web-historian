@@ -26,30 +26,28 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
-  fs.readFile(exports.paths.list, function(error, data) {
+  fs.readFile(exports.paths.list, function(error, files) {
     if (error) { callback(error); }
-    callback(String(data).split('\n'));
-  })
+    callback(String(files).split('\n'));
+  });
 };
 
 exports.isUrlInList = function(url, callback) {
-  fs.readFile(exports.paths.list, function(error, data) {
+  fs.readFile(exports.paths.list, function(error, files) {
     if (error) { callback(error); }
-    if (String(data).indexOf(url) >= 0) {
+    if (String(files).indexOf(url) >= 0) {
       callback(true);
     } else {
       callback(false);
     }
-  })
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
-  // fs.readFile(exports.paths.list, function(error, data) {
-  //   if (error) callback(error);
-  //   if (String(data).indexOf(url) < 0) {
-  //     callback(String(data));
-  //   }
-  // })
+  fs.appendFile(exports.paths.list, url + '\n', function(error, files) {
+    if (error) { callback(error); }
+    callback(files);
+  })
 };
 
 exports.isUrlArchived = function(url, callback) {
@@ -59,4 +57,7 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
+  for (var i = 0; i < urls.length; i++) {
+    fs.writeFile(exports.paths.archivedSites + '/' + urls[i]);
+  }
 };

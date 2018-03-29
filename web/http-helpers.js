@@ -14,19 +14,19 @@ exports.headers = headers;
 
 exports.serveAssets = function(res, asset, statusCode, callback) {
   fs.readFile(archive.paths.siteAssets + '/' + asset, function(error, data) {
-    if (error) { callback(error) };
+    if (error) { callback(error); }
     res.writeHead(statusCode, headers);
     res.end(String(data));
-  })
+  });
 };
 
 
 exports.serveArchives = function(res, url, statusCode, callback) {
   fs.readFile(archive.paths.archivedSites + '/' + url, function(error, data) {
-    if (error) { callback(error) };
+    if (error) { callback(error); }
     res.writeHead(statusCode, headers);
     res.end(String(data));
-  })
+  });
 };
 
 

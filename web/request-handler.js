@@ -7,9 +7,10 @@ var httpHelper = require('./http-helpers');
 
 
 exports.handleRequest = function (req, res) {
-  var address = url.parse(req.url).pathname;
 
+  var address = url.parse(req.url).pathname;
   var noSlash = address.replace('/', '');
+
   if (req.method === 'GET') {
     if (address === '/') {
       httpHelper.serveAssets(res, 'index.html', 200);
@@ -23,8 +24,31 @@ exports.handleRequest = function (req, res) {
         }
       });
     }
-  } else if (req.methos === 'POST') {
-    var storage = [];
+  } else if (req.method === 'POST') {
+    var storage = '';
 
+    req.on('data', function(chunk) {
+      storage += chunk;
+    });
+    req.on('end', function() {
+      var newUrl = storage.slice(4);
+
+      archive.isUrlInList(newUrl, function(isInList, callback) {
+        if (isInList) {
+          archive.isUrlArchived(newUrl, function(isArchived, callback) {
+            if (isArchived) {
+              httpHelper.serveArchives(res, newUrl, 200);
+            } else {
+              httpHelper.serveAssets(res, 'random.html', 302);
+            }
+          });
+        } else {
+          fs.appendFile(archive.paths.list, newUrl + '\n', function(error, callback) {
+            if (error) { callback(error); }
+            httpHelper.serveAssets(res, 'random.html', 302);
+          });
+        }
+      });
+    });
   }
 };
