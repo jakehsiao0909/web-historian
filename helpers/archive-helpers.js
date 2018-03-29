@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var Promise = require('bluebird');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -28,9 +29,19 @@ exports.initialize = function(pathsObj) {
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, function(error, files) {
     if (error) { callback(error); }
-    callback(String(files).split('\n'));
+    var list = String(files).split('\n');
+    callback(list);
   });
 };
+// exports.readListOfUrls = function() {
+//   return new Promise(function(resolve, reject) {
+//     fs.readFile(exports.paths.list, function(error, files) {
+//       if (error) { reject(error); }
+//       var list = String(files).split('\n');      
+//       resolve(list);
+//     });
+//   });
+// };
 
 exports.isUrlInList = function(url, callback) {
   fs.readFile(exports.paths.list, function(error, files) {
@@ -42,6 +53,19 @@ exports.isUrlInList = function(url, callback) {
     }
   });
 };
+// exports.isUrlInList = function(url) {
+//   return new Promise(function(resolve, reject) {
+//     fs.readFile(exports.paths.list, function(error, files) {
+//       if (error) { reject(error); }
+//       if (String(files).indexOf(url) >= 0) {
+//         resolve(true);
+//       } else {
+//         resolve(false);
+//       }
+//     });
+//   });    
+// };
+
 
 exports.addUrlToList = function(url, callback) {
   fs.appendFile(exports.paths.list, url + '\n', function(error, files) {
@@ -49,12 +73,27 @@ exports.addUrlToList = function(url, callback) {
     callback(files);
   })
 };
+// exports.addUrlToList = function(url) {
+//   return new Promise(function(resolve, reject) {
+//     fs.appendFile(exports.paths.list, url + '\n', function(error, files) {
+//       if (error) { reject(error); }
+//       resolve(files);
+//     });
+//   });
+// };
 
 exports.isUrlArchived = function(url, callback) {
   fs.readdir(exports.paths.archivedSites, function(error, files) {
     callback(files.indexOf(url) >= 0);
   });
 };
+// exports.isUrlArchived = function(url) {
+//   return new Promise(function(resolve, reject) {
+//     fs.readdir(exports.paths.archivedSites, function(error, files) {
+//       callback(files.indexOf(url) >= 0);
+//     });
+//   });    
+// };
 
 exports.downloadUrls = function(urls) {
   for (var i = 0; i < urls.length; i++) {

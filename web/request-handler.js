@@ -33,19 +33,19 @@ exports.handleRequest = function (req, res) {
     req.on('end', function() {
       var newUrl = storage.slice(4);
 
-      archive.isUrlInList(newUrl, function(isInList, callback) {
+      archive.isUrlInList(newUrl, function(isInList) {
         if (isInList) {
-          archive.isUrlArchived(newUrl, function(isArchived, callback) {
+          archive.isUrlArchived(newUrl, function(isArchived) {
             if (isArchived) {
               httpHelper.serveArchives(res, newUrl, 200);
             } else {
-              httpHelper.serveAssets(res, 'random.html', 302);
+              httpHelper.serveAssets(res, 'loading.html', 302);
             }
           });
         } else {
           fs.appendFile(archive.paths.list, newUrl + '\n', function(error, callback) {
             if (error) { callback(error); }
-            httpHelper.serveAssets(res, 'random.html', 302);
+            httpHelper.serveAssets(res, 'loading.html', 302);
           });
         }
       });

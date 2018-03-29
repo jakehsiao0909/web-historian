@@ -12,9 +12,9 @@ var headers = {
 
 exports.headers = headers;
 
-exports.serveAssets = function(res, asset, statusCode, callback) {
+exports.serveAssets = function(res, asset, statusCode) {
   fs.readFile(archive.paths.siteAssets + '/' + asset, function(error, data) {
-    if (error) { callback(error); }
+    if (error) { throw error; }
     res.writeHead(statusCode, headers);
     res.end(String(data));
   });
